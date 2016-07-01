@@ -161,15 +161,40 @@ to use with helm"
   (interactive)
   (let ((descriptions ())
 	(infos (latexdiff--get-commits-infos))
-	(tmp-desc nil))
+	(tmp-desc nil)
+	(lengths '((l1 . 0) (l2 . 0) (l3 . 0) (l4 . 0))))
+    ;; Get lengths
+    (dolist (tmp-desc infos)
+      (pop tmp-desc)
+      (when (> (length (nth 0 tmp-desc)) (cdr (assoc 'l1 lengths)))
+	  (add-to-list 'lengths `(l1 . ,(length (nth 1 tmp-desc)))))
+      (when (> (length (nth 1 tmp-desc)) (cdr (assoc 'l2 lengths)))
+	  (add-to-list 'lengths `(l2 . ,(length (nth 2 tmp-desc)))))
+      (when (> (length (nth 2 tmp-desc)) (cdr (assoc 'l3 lengths)))
+	  (add-to-list 'lengths `(l3 . ,(length (nth 3 tmp-desc)))))
+      (when (> (length (nth 3 tmp-desc)) (cdr (assoc 'l4 lengths)))
+	  (add-to-list 'lengths `(l4 . ,(length (nth 4 tmp-desc)))))
+      )
+    (print lengths)
+    ;; Get infos
     (dolist (tmp-desc infos)
       (pop tmp-desc)
       (push (string-join
 	     (list
-	      (propertize (nth 1 tmp-desc) 'face 'latexdiff-author-face)
-	      (propertize (nth 0 tmp-desc) 'face 'latexdiff-date-face)
-	      (propertize (nth 2 tmp-desc) 'face 'latexdiff-message-face)
-	      (propertize (nth 3 tmp-desc) 'face 'latexdiff-ref-labels-face))
+	      (propertize (format
+			   (format "%%-%ds "
+				   (cdr (assoc 'l1 lengths)))
+			   (nth 1 tmp-desc)) 'face 'latexdiff-author-face)
+	      (propertize (format
+			   (format "%%-%ds "
+				   (cdr (assoc 'l2 lengths)))
+			   (nth 0 tmp-desc)) 'face 'latexdiff-date-face)
+	      (propertize (format
+			   (format "%%-%ds"
+				   (cdr (assoc 'l3 lengths)))
+			   (nth 2 tmp-desc)) 'face 'latexdiff-message-face)
+	      (propertize (format "%s"
+			   (nth 3 tmp-desc)) 'face 'latexdiff-ref-labels-face))
 	     " ")
 	    descriptions)
       )
@@ -181,9 +206,9 @@ to use with helm"
   (let ((hashes ())
 	(infos (latexdiff--get-commits-infos))
 	(tmp-desc nil))
+    (setq infos (cdr infos))
     (dolist (tmp-desc infos)
-      (push (pop tmp-desc) hashes)
-      )
+      (push (pop tmp-desc) hashes))
       hashes))
 
 (defun latexdiff--update-commits ()
@@ -193,6 +218,8 @@ to use with helm"
   (let ((descr (latexdiff--get-commits-description))
 	(hash (latexdiff--get-commits-hashes))
 	(list ()))
+      (print descr)
+      (print hash)
     (while (not (equal (length descr) 0))
       (setq list (cons (cons (pop descr) (pop hash)) list)))
     (reverse list)))
