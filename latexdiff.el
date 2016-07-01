@@ -1,9 +1,75 @@
-;;;;;; todo ;;;;;;
+;;; latexdiff.el --- Latexdiff integration in Emacs
+
+;; Copyright (C) 2016 Launay Gaby
+
+;; Author: Launay Gaby <gaby.launay@gmail.com>
+;; Maintainer: Launay Gaby <gaby.launay@gmail.com>
+;; Version: 0.1.0
+;; Keywords: latex, diff
+;; URL: http://github.com/muahah/emacs-latexdiff
+
+;; This file is NOT part of GNU Emacs.
+
+;;; License:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
+
+;;; Commentary:
+
+;; latexdiff is a minor mode to interact with Latexdiff-vc
+;; [https://github.com/ftilmann/latexdiff] for git repository
+;; and using Helm.
+
+;; To use latexdiff, make sure that this file is in Emacs load-path
+;; (add-to-list 'load-path "/path/to/directory/or/file")
+;;
+;; Then require latexdiff
+;; (require 'latexdiff)
+
+;; To start latexdiff
+;; (latexdiff-mode t) or M-x latexdiff-mode
+;;
+;; latexdiff is buffer local, so hook it up
+;; (add-hook 'latex-mode-hook 'latexdiff-mode)
+;; or
+;; (add-hook 'LaTeX-mode-hook 'latexdiff-mode)
+;; for use with Auctex
+;;
+;; latexdiff do not define default keybinding, so add them
+;;
+;; (define-key latexdiff-mode-map (kbd "C-c l d") 'helm-latexdiff)
+;; or with Evil
+;; (evil-leader/set-key-for-mode 'latex-mode "ld" 'helm-latexdiff)
+;;
+;; The main function to use is `helm-latexdiff' which show you the
+;; commits of your current git repository and ask you to choose
+;; the two commits to use latexdiff on
+
+;;; Todo:
+
 ;; add check to test if latexdiff is installed
 ;; add nice colors
 ;; add ergonomy !
 
+;;; Code:
 
+(require 'helm)
+
+(defvar latexdiff-mode-map (make-sparse-keymap)
+  "Keymap for `latexdiff-mode'.")
 
 (defface latexdiff-date-face
   '((t (:inherit default :foreground "red")))
@@ -24,6 +90,19 @@
   '((t (:inherit default :foreground "orange")))
   "Face for the ref-labels"
   :group 'latexdiff)
+
+(defgroup latexdiff nil
+  "latexdiff integration in Emacs"
+  :prefix "latexdiff-"
+  :link `(url-link :tag "latexdiff homepage" "https://github.com/muahah/emacs-latexdiff"))
+
+;;;###autoload
+(define-minor-mode latexdiff-mode
+  "Latexdiff integration"
+  :init-value nil
+  :lighter " Latexdiff"
+  :keymap latexdiff-mode-map
+  )
 
 (defun latexdiff--compile-diff (&optional REV1 REV2)
   "Use latexdiff to compile a pdf file of the
@@ -153,6 +232,5 @@ to use with helm"
     (latexdiff--compile-diff rev1 rev2)
   )))
 
-(evil-leader/set-key-for-mode 'latex-mode "ed" 'helm-latexdiff)
-(evil-leader/set-key-for-mode 'latex-mode "eD" 'helm-latexdiff-range)
-(evil-leader/set-key-for-mode 'latex-mode "ec" 'latexdiff--clean)
+
+(provide 'latexdiff)
