@@ -72,12 +72,12 @@
   "Keymap for `latexdiff-mode'.")
 
 (defface latexdiff-date-face
-  '((t (:inherit default :foreground "red")))
+  '((t (:inherit helm-prefarg)))
   "Face for the date"
   :group 'latexdiff)
 
 (defface latexdiff-author-face
-  '((t (:inherit default :foreground "green")))
+  '((t (:inherit helm-ff-file)))
   "Face for the author"
   :group 'latexdiff)
 
@@ -87,7 +87,7 @@
   :group 'latexdiff)
 
 (defface latexdiff-ref-labels-face
-  '((t (:inherit default :foreground "orange")))
+  '((t (:inherit helm-grep-match)))
   "Face for the ref-labels"
   :group 'latexdiff)
 
