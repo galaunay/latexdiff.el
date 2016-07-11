@@ -228,9 +228,10 @@ to use with helm"
   (let ((file (TeX-master-file nil nil t)))
     (call-process "/bin/bash" nil 0 nil "-c"
 		  (format "rm -f %s-diff* ;
-                           rm -f %s-oldtmp* ;
-                           rm -f latexdiff.log"
-			  file file))))
+			   rm -f %s-oldtmp* ;
+			   rm -f latexdiff.log"
+			  file file))
+    (message "[%s.tex] Removed all latexdiff generated files" file)))
 
 (defun helm-latexdiff ()
   (interactive)
