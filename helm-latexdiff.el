@@ -51,7 +51,7 @@
 
 ;;; todo
 ;; Make something more general than okular...
-;; Remove *latexdiff* buffer if nothing happen ?
+;; sometimes do not get the revision number
 
 ;;; Code:
 
@@ -109,8 +109,7 @@ after generating the diff pdf"
 		  "hash latexdiff-vc 2>/dev/null || echo 'NOT INSTALLED'")
     (goto-char (point-min))
     (if (re-search-forward "NOT INSTALLED" (point-max) t)
-	(error "'latexdiff' is not installed, please install it")
-      )))
+	(error "'latexdiff' is not installed, please install it"))))
 
 (defun helm-latexdiff--check-if-pdf-produced (diff-file)
   "Check if `diff-file' has been produced"
@@ -124,6 +123,7 @@ after generating the diff pdf"
 	(file (process-get proc 'file))
 	(REV1 (process-get proc 'rev1))
 	(REV2 (process-get proc 'rev2)))
+    (kill-buffer " *latexdiff*")
     ;; Clean if asked
     (when helm-latexdiff-auto-clean-aux
       (call-process "/bin/bash" nil 0 nil "-c"
@@ -145,7 +145,7 @@ difference between REV1 and REV2"
 	(process nil))
     (helm-latexdiff--check-if-installed)
     (message "[%s.tex] Generating latex diff between %s and %s" file REV1 REV2)
-    (setq process (start-process "latexdiff" "*latexdiff*"
+    (setq process (start-process "latexdiff" " *latexdiff*"
 				 "/bin/bash" "-c"
 				 (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s -r %s -r %s %s.tex > latexdiff.log ;" helm-latexdiff-args REV1 REV2 file)))
     (process-put process 'diff-file diff-file)
@@ -163,7 +163,7 @@ difference between the current state and REV"
 	(process nil))
     (helm-latexdiff--check-if-installed)
     (message "[%s.tex] Generating latex diff with %s" file REV)
-    (setq process (start-process "latexdiff" "*latexdiff*"
+    (setq process (start-process "latexdiff" " *latexdiff*"
 				 "/bin/bash" "-c"
 				 (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s -r %s %s.tex > latexdiff.log ;" helm-latexdiff-args REV file)))
     (process-put process 'diff-file diff-file)
