@@ -59,8 +59,12 @@
 
 (defcustom helm-latexdiff-args
   "--force --pdf"
-  "Argument passed to `latexdiff-vc`
-(modify at your own risk)"
+  "Argument passed to 'latexdiff-vc'
+(modify at your own risk)
+
+You may want to add '--flatten' if you have project with
+multiple files.
+"
   :type 'string
   :group 'helm-latexdiff)
 
@@ -130,7 +134,10 @@ after generating the diff pdf"
 		    (format "GLOBIGNORE='*.pdf' ; rm -r %s* ; rm -r %s-oldtmp* ; GLOBIGNORE='' ;" diff-file file)))
     ;; Check if pdf has been produced
     (if (not (helm-latexdiff--check-if-pdf-produced diff-file))
-	(message "[%s.tex] PDF file has not been produced, check `latexdiff.log' for more informations" file)
+	(save-excursion
+	  (find-file "latexdiff.log")
+	  (rename-buffer "*latexdiff.log*"))
+	(message "[%s.tex] PDF file has not been produced, check `*latexdiff.log*' buffer for more informations" file)
       ;; Display the pdf if asked
       (when helm-latexdiff-auto-display-pdf
 	(call-process "/bin/bash" nil 0 nil "-c"
