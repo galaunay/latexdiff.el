@@ -8,6 +8,12 @@
 (defun latexdiff-testcase-dir ()
   (expand-file-name "./test/testcase"))
 
+(defun latexdiff-testcase-rev1 ()
+"bfbe4f5")
+
+(defun latexdiff-testcase-rev2 ()
+"8672704")
+
 (defun latexdiff-testcase-git-dir ()
   (expand-file-name "./test/testcase-git"))
 

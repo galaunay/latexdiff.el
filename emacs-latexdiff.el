@@ -139,7 +139,6 @@ If set to 'Emacs', open the PDF within Emacs."
 
 (defun latexdiff--check-if-pdf-produced (diff-file)
   "Check if DIFF-FILE has been produced."
-  (message "dif-file-check: %s" diff-file)
   (let ((size (car (last (file-attributes diff-file) 5))))
     (not (or (eq size 0) (not (file-exists-p diff-file))))))
 
@@ -249,7 +248,8 @@ Return the diff file name"
     (process-put process 'file file)
     (process-put process 'rev1 REV1)
     (process-put process 'rev2 REV2)
-    (set-process-sentinel process 'latexdiff--latexdiff-sentinel)
+    (setq latexdiff-runningp t)
+    (set-process-sentinel process 'latexdiff-vc--latexdiff-sentinel)
     diff-file))
 
 (defun latexdiff-vc--compile-diff-with-current (REV)
@@ -265,7 +265,8 @@ Return the diff file name"
       (process-put process 'file file)
       (process-put process 'rev1 "current")
       (process-put process 'rev2 REV)
-      (set-process-sentinel process 'latexdiff--latexdiff-sentinel))))
+      (setq latexdiff-runningp t)
+      (set-process-sentinel process 'latexdiff-vc--latexdiff-sentinel))))
 
 (defun latexdiff--get-commits-infos ()
   "Return a list with all commits informations."
@@ -343,7 +344,7 @@ to use with helm"
   (helm-build-sync-source "Latexdiff choose commit"
     :candidates 'latexdiff--update-commits
     ;; :mode-line helm-read-file-name-mode-line-string
-    :action '(("Choose this commit" . latexdiff--compile-diff-with-current)))
+    :action '(("Choose this commit" . latexdiff-vc--compile-diff-with-current)))
   "Helm source for modified projectile projects.")
 
 (defun latexdiff-clean ()
@@ -383,7 +384,7 @@ to use with helm"
   (let* ((commits (latexdiff--update-commits))
          (commit (completing-read "Choose a commit:" commits))
          (commit-hash (cdr (assoc commit commits))))
-    (latexdiff--compile-diff-with-current commit-hash)))
+    (latexdiff-vc--compile-diff-with-current commit-hash)))
 
 (defun helm-latexdiff-vc-range ()
   "Ask for two commits and make the difference between them."
@@ -392,7 +393,7 @@ to use with helm"
   (let* ((commits (latexdiff--update-commits))
          (rev1 (helm-comp-read "Base commit: " commits))
          (rev2 (helm-comp-read "Revised commit: " commits)))
-    (latexdiff--compile-diff rev1 rev2)))
+    (latexdiff-vc--compile-diff rev1 rev2)))
 
 (defun latexdiff-vc-range ()
   "Ask for two commits and make the difference between them."
@@ -403,7 +404,7 @@ to use with helm"
          (commit1-hash (cdr (assoc commit1 commits)))
          (commit2 (completing-read "Revised commit:" commits))
          (commit2-hash (cdr (assoc commit2 commits))))
-    (latexdiff--compile-diff commit1-hash commit2-hash)))
+    (latexdiff-vc--compile-diff commit1-hash commit2-hash)))
 
 
 (provide 'emacs-latexdiff)
