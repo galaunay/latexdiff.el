@@ -1,8 +1,15 @@
+
+(setq latexdiff-auto-display-pdf nil)
+
+(let ((latexdiff-dir (f-parent (f-dirname (f-this-file)))))
+  (add-to-list 'load-path latexdiff-dir))
+(require 'emacs-latexdiff)
+
 (defun latexdiff-testcase-dir ()
-  (expand-file-name "./testcase"))
+  (expand-file-name "./test/testcase"))
 
 (defun latexdiff-testcase-git-dir ()
-  (expand-file-name "./testcase-git"))
+  (expand-file-name "./test/testcase-git"))
 
 (defun latexdiff-testcase-file1 ()
   (let ((dir (latexdiff-testcase-dir)))
