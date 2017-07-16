@@ -1,4 +1,5 @@
-;;; helm-latexdiff.el --- Latexdiff integration in Emacs
+;; TODO : Need complete rewriting
+;;; emacs-latexdiff.el --- Latexdiff integration in Emacs
 
 ;; Copyright (C) 2016 Launay Gaby
 
@@ -29,23 +30,23 @@
 
 ;;; Commentary:
 
-;; helm-latexdiff allow to interact with Latexdiff-vc
+;; emacs-latexdiff allow to interact with Latexdiff-vc
 ;; [https://github.com/ftilmann/latexdiff] for git repository
 ;; and using Helm.
 
-;; To use helm-latexdiff, make sure that this file is in Emacs load-path
+;; To use emacs-latexdiff, make sure that this file is in Emacs load-path
 ;; (add-to-list 'load-path "/path/to/directory/or/file")
 ;;
-;; Then require helm-latexdiff
-;; (require 'helm-latexdiff)
+;; Then require emacs-latexdiff
+;; (require 'emacs-latexdiff)
 ;;
-;; helm-latexdiff do not define default keybinding, so add them
+;; emacs-latexdiff do not define default keybinding, so add them
 ;;
-;; (define-key latex-mode-map (kbd "C-c l d") 'helm-latexdiff)
+;; (define-key latex-mode-map (kbd "C-c l d") 'latexdiff)
 ;; or with Evil
-;; (evil-leader/set-key-for-mode 'latex-mode "ld" 'helm-latexdiff)
+;; (evil-leader/set-key-for-mode 'latex-mode "ld" 'latexdiff)
 ;;
-;; The main function to use is `helm-latexdiff' which show you the
+;; The main function to use is `latexdiff' which show you the
 ;; commits of your current git repository and ask you to choose
 ;; the two commits to use latexdiff on
 
@@ -60,71 +61,71 @@
 (require 'subr-x)
 (require 'tex)
 
-(defcustom helm-latexdiff-args
+(defcustom latexdiff-args
   "--force --pdf"
   "Argument passed to 'latexdiff' (modify at your own risk).
 
 You may want to add '--flatten' if you have project with
 multiple files."
   :type 'string
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defcustom helm-latexdiff-vc-args
+(defcustom latexdiff-vc-args
   "--force --pdf"
   "Argument passed to 'latexdiff-vc' (modify at your own risk).
 
 You may want to add '--flatten' if you have project with
 multiple files."
   :type 'string
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defcustom helm-latexdiff-auto-display-pdf
+(defcustom latexdiff-auto-display-pdf
   t
   "If set to `t`, generated diff pdf are automatically displayed after generation."
   :type 'boolean
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defcustom helm-latexdiff-auto-clean-aux
+(defcustom latexdiff-auto-clean-aux
   t
   "If set to `t`, automatically clean the auxilliary files (.aux, .log, ...)
 after generating the diff pdf"
   :type 'boolean
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defcustom helm-latexdiff-pdf-viewer
+(defcustom latexdiff-pdf-viewer
   "Emacs"
   "Command use to view PDF diffs.
 
 If set to 'Emacs', open the PDF within Emacs."
   :type 'string
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defface helm-latexdiff-date-face
+(defface latexdiff-date-face
   '((t (:inherit helm-prefarg)))
   "Face for the date"
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defface helm-latexdiff-author-face
+(defface latexdiff-author-face
   '((t (:inherit helm-ff-file)))
   "Face for the author"
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defface helm-latexdiff-message-face
+(defface latexdiff-message-face
   '((t (:inherit default :foreground "white")))
   "Face for the message"
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defface helm-latexdiff-ref-labels-face
+(defface latexdiff-ref-labels-face
   '((t (:inherit helm-grep-match)))
   "Face for the ref-labels"
-  :group 'helm-latexdiff)
+  :group 'latexdiff)
 
-(defgroup helm-latexdiff nil
+(defgroup latexdiff nil
   "latexdiff integration in Emacs."
-  :prefix "helm-latexdiff-"
-  :link `(url-link :tag "helm-latexdiff homepage" "https://github.com/muahah/emacs-latexdiff"))
+  :prefix "latexdiff-"
+  :link `(url-link :tag "latexdiff homepage" "https://github.com/muahah/emacs-latexdiff"))
 
-(defun helm-latexdiff--check-if-installed ()
+(defun latexdiff--check-if-installed ()
   "Check if latexdiff is installed."
   (with-temp-buffer
     (call-process "/bin/bash" nil t nil "-c"
@@ -133,13 +134,13 @@ If set to 'Emacs', open the PDF within Emacs."
     (if (re-search-forward "NOT INSTALLED" (point-max) t)
 	(error "'latexdiff' is not installed, please install it"))))
 
-(defun helm-latexdiff--check-if-pdf-produced (diff-file)
+(defun latexdiff--check-if-pdf-produced (diff-file)
   "Check if DIFF-FILE has been produced."
   (let* ((diff-file (format "%s.pdf" diff-file))
 	 (size (car (last (file-attributes diff-file) 5))))
     (not (or (eq size 0) (not (file-exists-p diff-file))))))
 
-(defun helm-latexdiff-vc--latexdiff-sentinel (proc msg)
+(defun latexdiff-vc--latexdiff-sentinel (proc msg)
   "Sentinel for latexdiff executions.
 
 PROC is the process to watch and MSG the message to
@@ -149,24 +150,24 @@ display when the process ends"
 	(FILE2 (process-get proc 'file2)))
     (kill-buffer " *latexdiff*")
     ;; Clean if asked
-    (when helm-latexdiff-auto-clean-aux
+    (when latexdiff-auto-clean-aux
       (call-process "/bin/bash" nil 0 nil "-c"
 		    (format "GLOBIGNORE='*.pdf' ; rm -r %s* ; GLOBIGNORE='' ;" diff-file)))
     ;; Check if pdf has been produced
-    (if (not (helm-latexdiff--check-if-pdf-produced diff-file))
+    (if (not (latexdiff--check-if-pdf-produced diff-file))
 	(save-excursion
 	  (find-file "latexdiff.log")
 	  (rename-buffer "*latexdiff.log*"))
 	(message "[%s.tex] PDF file has not been produced, check `*latexdiff.log*' buffer for more informations" FILE1)
       ;; Display the pdf if asked
-        (when helm-latexdiff-auto-display-pdf
+        (when latexdiff-auto-display-pdf
           (message "[%s.tex] Displaying PDF diff with %s" FILE1 FILE2)
-          (if (string= helm-latexdiff-pdf-viewer "Emacs")
+          (if (string= latexdiff-pdf-viewer "Emacs")
               (find-file (format "%s.pdf" diff-file))
             (call-process "/bin/bash" nil 0 nil "-c"
-                          (format "%s %s.pdf" helm-latexdiff-pdf-viewer diff-file)))))))
+                          (format "%s %s.pdf" latexdiff-pdf-viewer diff-file)))))))
 
-(defun helm-latexdiff--latexdiff-sentinel (proc msg)
+(defun latexdiff--latexdiff-sentinel (proc msg)
   "Sentinel for latexdiff executions.
 
 PROC is the process to watch and MSG the message to
@@ -177,69 +178,69 @@ display when the process ends"
 	(REV2 (process-get proc 'rev2)))
     (kill-buffer " *latexdiff*")
     ;; Clean if asked
-    (when helm-latexdiff-auto-clean-aux
+    (when latexdiff-auto-clean-aux
       (call-process "/bin/bash" nil 0 nil "-c"
 		    (format "GLOBIGNORE='*.pdf' ; rm -r %s* ; rm -r %s-oldtmp* ; GLOBIGNORE='' ;" diff-file file)))
     ;; Check if pdf has been produced
-    (if (not (helm-latexdiff--check-if-pdf-produced diff-file))
+    (if (not (latexdiff--check-if-pdf-produced diff-file))
 	(save-excursion
 	  (find-file "latexdiff.log")
 	  (rename-buffer "*latexdiff.log*"))
 	(message "[%s.tex] PDF file has not been produced, check `*latexdiff.log*' buffer for more informations" file)
       ;; Display the pdf if asked
-        (when helm-latexdiff-auto-display-pdf
+        (when latexdiff-auto-display-pdf
           (message "[%s.tex] Displaying PDF diff between %s and %s" file REV1 REV2)
-          (if (string= helm-latexdiff-pdf-viewer "Emacs")
+          (if (string= latexdiff-pdf-viewer "Emacs")
               (find-file (format "%s.pdf" diff-file))
             (call-process "/bin/bash" nil 0 nil "-c"
-                          (format "%s %s.pdf" helm-latexdiff-pdf-viewer diff-file)))))))
+                          (format "%s %s.pdf" latexdiff-pdf-viewer diff-file)))))))
 
-(defun helm-latexdiff--compile-diff (&optional FILE1 FILE2)
+(defun latexdiff--compile-diff (&optional FILE1 FILE2)
   "Use latexdiff to compile a pdf file of the difference between FILE1 and FILE2."
   (let ((diff-file (format "%s-diff" FILE2))
 	(process nil))
-    (helm-latexdiff--check-if-installed)
+    (latexdiff--check-if-installed)
     (message "[%s.tex] Generating latex diff with %s" FILE1 FILE2)
     (setq process (start-process "latexdiff" " *latexdiff*"
 				 "/bin/bash" "-c"
-				 (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s %s %s &> latexdiff.log ;" helm-latexdiff-args FILE1 FILE2)))
+				 (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s %s %s &> latexdiff.log ;" latexdiff-args FILE1 FILE2)))
     (process-put process 'diff-file diff-file)
     (process-put process 'file1 FILE1)
     (process-put process 'file2 FILE2)
-    (set-process-sentinel process 'helm-latexdiff-vc--latexdiff-sentinel)))
+    (set-process-sentinel process 'latexdiff-vc--latexdiff-sentinel)))
 
-(defun helm-latexdiff-vc--compile-diff (&optional REV1 REV2)
+(defun latexdiff-vc--compile-diff (&optional REV1 REV2)
   "Use latexdiff to compile a pdf file of the difference between REV1 and REV2."
   (let ((file (TeX-master-file nil nil t))
 	(diff-file (format "%s-diff%s-%s" (TeX-master-file nil nil t) REV1 REV2))
 	(process nil))
-    (helm-latexdiff--check-if-installed)
+    (latexdiff--check-if-installed)
     (message "[%s.tex] Generating latex diff between %s and %s" file REV1 REV2)
     (setq process (start-process "latexdiff" " *latexdiff*"
 				 "/bin/bash" "-c"
-				 (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s -r %s -r %s %s.tex &> latexdiff.log ;" helm-latexdiff-vc-args REV1 REV2 file)))
+				 (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s -r %s -r %s %s.tex &> latexdiff.log ;" latexdiff-vc-args REV1 REV2 file)))
     (process-put process 'diff-file diff-file)
     (process-put process 'file file)
     (process-put process 'rev1 REV1)
     (process-put process 'rev2 REV2)
-    (set-process-sentinel process 'helm-latexdiff--latexdiff-sentinel)))
+    (set-process-sentinel process 'latexdiff--latexdiff-sentinel)))
 
-(defun helm-latexdiff-vc--compile-diff-with-current (REV)
+(defun latexdiff-vc--compile-diff-with-current (REV)
   "Use latexdiff to compile a pdf file of the difference between the current state and REV."
   (let ((file (TeX-master-file nil nil t))
 	(diff-file (format "%s-diff%s" (TeX-master-file nil nil t) REV))
 	(process nil))
-    (helm-latexdiff--check-if-installed)
+    (latexdiff--check-if-installed)
     (message "[%s.tex] Generating latex diff with %s" file REV)
-    (let* ((command (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s -r %s %s.tex &> latexdiff.log ;" helm-latexdiff-vc-args REV file))
+    (let* ((command (format "rm -r latexdiff.log ; yes X | latexdiff-vc %s -r %s %s.tex &> latexdiff.log ;" latexdiff-vc-args REV file))
           (process (start-process "latexdiff" " *latexdiff*" "/bin/bash" "-c" command)))
       (process-put process 'diff-file diff-file)
       (process-put process 'file file)
       (process-put process 'rev1 "current")
       (process-put process 'rev2 REV)
-      (set-process-sentinel process 'helm-latexdiff--latexdiff-sentinel))))
+      (set-process-sentinel process 'latexdiff--latexdiff-sentinel))))
 
-(defun helm-latexdiff--get-commits-infos ()
+(defun latexdiff--get-commits-infos ()
   "Return a list with all commits informations."
   ;; TODO : Implement other backends ?
   (let ((infos nil))
@@ -250,10 +251,10 @@ display when the process ends"
 	(push (split-string (match-string 0) "---") infos)))
     infos))
 
-(defun helm-latexdiff--get-commits-description ()
+(defun latexdiff--get-commits-description ()
   "Return a list of commits description strings."
   (let ((descriptions ())
-	(infos (helm-latexdiff--get-commits-infos))
+	(infos (latexdiff--get-commits-infos))
 	(tmp-desc nil)
 	(lengths '((l1 . 0) (l2 . 0) (l3 . 0) (l4 . 0))))
     ;; Get lengths
@@ -276,36 +277,36 @@ display when the process ends"
 			   (format "%%-%ds "
 				   (cdr (assoc 'l2 lengths)))
 			   (nth 1 tmp-desc))
-                          'face 'helm-latexdiff-author-face)
+                          'face 'latexdiff-author-face)
 	      (propertize (format
 			   (format "%%-%ds "
 				   (cdr (assoc 'l1 lengths)))
 			   (nth 0 tmp-desc))
-                          'face 'helm-latexdiff-date-face)
+                          'face 'latexdiff-date-face)
 	      (propertize (format "%s"
 				  (nth 3 tmp-desc))
-                          'face 'helm-latexdiff-ref-labels-face)
+                          'face 'latexdiff-ref-labels-face)
 	      (propertize (format "%s"
 				  (nth 2 tmp-desc))
-                          'face 'helm-latexdiff-message-face))
+                          'face 'latexdiff-message-face))
 	     " ")
 	    descriptions))
     descriptions))
 
-(defun helm-latexdiff--get-commits-hashes ()
+(defun latexdiff--get-commits-hashes ()
   "Return the list of commits hashes."
   (let ((hashes ())
-	(infos (helm-latexdiff--get-commits-infos))
+	(infos (latexdiff--get-commits-infos))
 	(tmp-desc nil))
     (dolist (tmp-desc infos)
       (push (pop tmp-desc) hashes))
     hashes))
 
-(defun helm-latexdiff--update-commits ()
+(defun latexdiff--update-commits ()
   "Return the alist of (HASH . COMMITS-DESCRIPTION)
 to use with helm"
-  (let ((descr (helm-latexdiff--get-commits-description))
-	(hash (helm-latexdiff--get-commits-hashes))
+  (let ((descr (latexdiff--get-commits-description))
+	(hash (latexdiff--get-commits-hashes))
 	(list ()))
     (while (not (equal (length descr) 0))
       (setq list (cons (cons (pop descr) (pop hash)) list)))
@@ -313,12 +314,12 @@ to use with helm"
 
 (defvar helm-source-latexdiff-choose-commit
   (helm-build-sync-source "Latexdiff choose commit"
-    :candidates 'helm-latexdiff--update-commits
+    :candidates 'latexdiff--update-commits
     :mode-line helm-read-file-name-mode-line-string
-    :action '(("Choose this commit" . helm-latexdiff--compile-diff-with-current)))
+    :action '(("Choose this commit" . latexdiff--compile-diff-with-current)))
   "Helm source for modified projectile projects.")
 
-(defun helm-latexdiff-clean ()
+(defun latexdiff-clean ()
   "Remove all file generated by latexdiff."
   (interactive)
   (let ((file (TeX-master-file nil nil t)))
@@ -330,53 +331,53 @@ to use with helm"
     (message "[%s.tex] Removed all latexdiff generated files" file)))
 
 
-(defun helm-latexdiff ()
+(defun latexdiff ()
   "Ask for two tex files and make the difference between them."
   (interactive)
   (let ((file1 (read-file-name "Base file: " nil nil t nil))
         (file2 (read-file-name "Base file: " nil nil t nil)))
-    (helm-latexdiff--compile-diff file1 file2)
+    (latexdiff--compile-diff file1 file2)
     )
   )
 
 (defun helm-latexdiff-vc ()
   "Ask for a commit and make the difference with the current version."
   (interactive)
-  (helm-latexdiff--check-if-installed)
+  (latexdiff--check-if-installed)
   (helm :sources 'helm-source-latexdiff-choose-commit
-	:buffer "*helm-latexdiff*"
+	:buffer "*latexdiff*"
 	:nomark t
 	:prompt "Choose a commit: "))
 
 (defun latexdiff-vc ()
   "Ask for a commit and make the difference with the current version."
   (interactive)
-  (helm-latexdiff--check-if-installed)
-  (let* ((commits (helm-latexdiff--update-commits))
+  (latexdiff--check-if-installed)
+  (let* ((commits (latexdiff--update-commits))
          (commit (completing-read "Choose a commit:" commits))
          (commit-hash (cdr (assoc commit commits))))
-    (helm-latexdiff--compile-diff-with-current commit-hash)))
+    (latexdiff--compile-diff-with-current commit-hash)))
 
 (defun helm-latexdiff-vc-range ()
   "Ask for two commits and make the difference between them."
   (interactive)
-  (helm-latexdiff--check-if-installed)
-  (let* ((commits (helm-latexdiff--update-commits))
+  (latexdiff--check-if-installed)
+  (let* ((commits (latexdiff--update-commits))
 	 (rev1 (helm-comp-read "Base commit: " commits))
 	 (rev2 (helm-comp-read "Revised commit: " commits)))
-    (helm-latexdiff--compile-diff rev1 rev2)))
+    (latexdiff--compile-diff rev1 rev2)))
 
 (defun latexdiff-vc-range ()
   "Ask for two commits and make the difference between them."
   (interactive)
-  (helm-latexdiff--check-if-installed)
-  (let* ((commits (helm-latexdiff--update-commits))
+  (latexdiff--check-if-installed)
+  (let* ((commits (latexdiff--update-commits))
          (commit1 (completing-read "Base commit:" commits))
          (commit1-hash (cdr (assoc commit1 commits)))
          (commit2 (completing-read "Revised commit:" commits))
          (commit2-hash (cdr (assoc commit2 commits))))
-    (helm-latexdiff--compile-diff commit1-hash commit2-hash)))
+    (latexdiff--compile-diff commit1-hash commit2-hash)))
 
 
-(provide 'helm-latexdiff)
-;;; helm-latexdiff.el ends here
+(provide 'emacs-latexdiff)
+;;; emacs-latexdiff.el ends here
