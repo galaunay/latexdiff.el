@@ -1,0 +1,6 @@
+(ert-deftest check-commits-hash ()
+  (let ((file (latexdiff-testcase-file1)))
+    (find-file file)
+    (let ((hash (latexdiff--get-commits-hashes))
+          (hashs (latexdiff-testcase-commits-hash)))
+      (should (equal hash hashs)))))

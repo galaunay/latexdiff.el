@@ -1,12 +1,12 @@
-(ert-deftest check-rev-to-rev-diff ()
+(ert-deftest check-rev-to-current-diff ()
   (let ((file1 (latexdiff-testcase-file1))
-        (rev1 (latexdiff-testcase-rev1))
-        (rev2 (latexdiff-testcase-rev2)))
+        (rev1 (latexdiff-testcase-rev1)))
     (with-current-buffer (find-file-noselect file1)
-      (let ((diff-file (latexdiff-vc--compile-diff rev1 rev2)))
+      (let ((diff-file (latexdiff-vc--compile-diff-with-current rev1)))
         (while latexdiff-runningp (sleep-for 1))  ;; wait for the process to terminate
         (should (latexdiff--check-if-pdf-produced (format "%s.pdf" diff-file)))
         (latexdiff-clean))
       (with-current-buffer "*Messages*"
         (goto-char (point-max))
-        (should (search-backward (format "Generating latex diff between %s and %s" rev1 rev2) nil t))))))
+        (should (search-backward (format "Generating latex diff with %s" rev1)
+                                 nil t))))))

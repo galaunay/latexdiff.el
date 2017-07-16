@@ -266,7 +266,8 @@ Return the diff file name"
       (process-put process 'rev1 "current")
       (process-put process 'rev2 REV)
       (setq latexdiff-runningp t)
-      (set-process-sentinel process 'latexdiff-vc--latexdiff-sentinel))))
+      (set-process-sentinel process 'latexdiff-vc--latexdiff-sentinel))
+    diff-file))
 
 (defun latexdiff--get-commits-infos ()
   "Return a list with all commits informations."
@@ -358,15 +359,12 @@ to use with helm"
                           file file))
     (message "[%s.tex] Removed all latexdiff generated files" file)))
 
-
 (defun latexdiff ()
   "Ask for two tex files and make the difference between them."
   (interactive)
   (let ((file1 (read-file-name "Base file: " nil nil t nil))
         (file2 (read-file-name "Base file: " nil nil t nil)))
-    (latexdiff--compile-diff file1 file2)
-    )
-  )
+    (latexdiff--compile-diff file1 file2)))
 
 (defun helm-latexdiff-vc ()
   "Ask for a commit and make the difference with the current version."
