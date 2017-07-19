@@ -5,7 +5,7 @@ latexdiff is a minor mode to interact with [Latexdiff](https://github.com/ftilma
 repositories.
 
 ## Requirements
-Emacs-latexdiff require Emacs-24.3 or later versions
+Emacs-latexdiff require Emacs-24.4 or later versions
 and optionnaly [Helm](https://github.com/emacs-helm/helm)
 
 ## Install

@@ -3,17 +3,17 @@ before_install:
   - curl -fsSkL https://gist.github.com/rejeep/ebcd57c3af83b049833b/raw > travis.sh && source ./travis.sh
   - evm install $EVM_EMACS --use --skip
   - cask
+  - curl -L https://github.com/holgern/travis-texlive/releases/download/2017-07-05_09/texlive.tar.xz | tar -JxC ~
+  - git clone https://github.com/ftilmann/latexdiff/ ~/latexdiff
 env:
-  - EVM_EMACS=emacs-24.1-travis
-  - EVM_EMACS=emacs-24.2-travis
-  - EVM_EMACS=emacs-24.3-travis
   - EVM_EMACS=emacs-24.4-travis
+  - EVM_EMACS=emacs-24.5-travis
   - EVM_EMACS=emacs-25.1-travis
   - EVM_EMACS=emacs-25.2-travis
 install:
-  - git clone https://github.com/ftilmann/latexdiff/
-  - cd latexdiff
-  - export PATH="$PATH:$(pwd)"
+  - PATH=$HOME/texlive/bin/x86_64-linux:$PATH
+  - PATH="$PATH:$HOME/latexdiff"
 script:
   - emacs --version
+  - cask install
   - cask exec ert-runner
