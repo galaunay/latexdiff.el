@@ -1,4 +1,3 @@
-;; TODO : Need complete rewriting
 ;;; emacs-latexdiff.el --- Latexdiff integration in Emacs
 
 ;; Copyright (C) 2016-2017 Launay Gaby
@@ -85,6 +84,8 @@
 ;; $ make test
 
 ;; TODO : Make helm optional
+;; TODO : Make more exhaustive tests
+;; TODO : Implement other backend than git
 ;;; Code:
 
 (require 'helm)
@@ -196,7 +197,7 @@ display when the process ends"
             (erase-buffer)
             (insert-buffer-substring "latexdiff.log"))
           (kill-buffer "latexdiff.log")
-          (message "[%s] PDF file has not been produced, check `%s' buffer for more informations" file bufname))
+          (message "[%s] PDF file has not been produced, check `%s' buffer for more informations" file "*latexdiff-log*"))
       ;; Display the pdf if asked
       (when latexdiff-auto-display-pdf
         (message "[%s] Displaying PDF diff between %s and %s" file REV1 REV2)
@@ -302,7 +303,6 @@ Return the diff file name"
 
 (defun latexdiff--get-commits-infos ()
   "Return a list with all commits informations."
-  ;; TODO : Implement other backends ?
   (let ((infos nil))
     (with-temp-buffer
       (vc-git-command t nil nil "log" "--format=%h---%cr---%cn---%s---%d" "--abbrev-commit" "--date=short")
