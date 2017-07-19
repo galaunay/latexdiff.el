@@ -15,13 +15,13 @@
 "8672704")
 
 (defun latexdiff-testcase-commits-info ()
-  '(("bfbe4f5" "28 minutes ago" "galaunay" "perroquets" "") ("28ddecf" "28 minutes ago" "galaunay" "Lapin" "") ("8672704" "27 minutes ago" "galaunay" "removed section1" " (HEAD -> master)")))
+'(("bfbe4f5" "3 days ago" "galaunay" "perroquets" "") ("28ddecf" "3 days ago" "galaunay" "Lapin" "") ("8672704" "3 days ago" "galaunay" "removed section1" "") ("11f6343" "6 minutes ago" "galaunay" "Add pdf and second article" " (HEAD -> master, origin/master, origin/HEAD)")))
 
 (defun latexdiff-testcase-commits-description ()
-'(#("galaunay  39 minutes ago   (HEAD -> master) removed section1" 0 9 (face latexdiff-author-face) 10 25 (face latexdiff-date-face) 26 43 (face latexdiff-ref-labels-face) 44 60 (face latexdiff-message-face)) #("galaunay  39 minutes ago   Lapin" 0 9 (face latexdiff-author-face) 10 25 (face latexdiff-date-face) 27 32 (face latexdiff-message-face)) #("galaunay  40 minutes ago   perroquets" 0 9 (face latexdiff-author-face) 10 25 (face latexdiff-date-face) 27 37 (face latexdiff-message-face))))
+  '(#("galaunay  5 minutes ago   (HEAD -> master, origin/master, origin/HEAD) Add pdf and second article" 0 9 (face latexdiff-author-face) 10 24 (face latexdiff-date-face) 25 70 (face latexdiff-ref-labels-face) 71 97 (face latexdiff-message-face)) #("galaunay  3 days ago      removed section1" 0 9 (face latexdiff-author-face) 10 24 (face latexdiff-date-face) 26 42 (face latexdiff-message-face)) #("galaunay  3 days ago      Lapin" 0 9 (face latexdiff-author-face) 10 24 (face latexdiff-date-face) 26 31 (face latexdiff-message-face)) #("galaunay  3 days ago      perroquets" 0 9 (face latexdiff-author-face) 10 24 (face latexdiff-date-face) 26 36 (face latexdiff-message-face))))
 
 (defun latexdiff-testcase-commits-hash ()
-  '("8672704" "28ddecf" "bfbe4f5"))
+  '("11f6343" "8672704" "28ddecf" "bfbe4f5"))
 
 (defun latexdiff-testcase-git-dir ()
   (expand-file-name "./test/testcase-git"))
