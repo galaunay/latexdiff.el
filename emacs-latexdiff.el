@@ -422,6 +422,7 @@ Return the diff file name"
 ;; Helm
 ;;;;;;;;;
 (when (featurep 'helm)
+  (require 'helm-source)
 
   (defvar helm-source-latexdiff-choose-commit
     (helm-build-sync-source "Latexdiff choose commit"
