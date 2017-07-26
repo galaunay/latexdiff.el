@@ -1,10 +1,10 @@
 # Emacs-latexdiff
 
-Latexdiff is a minor mode to interact with [Latexdiff](https://github.com/ftilmann/latexdiff) for version controlled
+Latexdiff is a minor mode for Emacs to interact with [Latexdiff](https://github.com/ftilmann/latexdiff) for version controlled
 repositories.
 
 ## Requirements
-Emacs-latexdiff requires Emacs-24.4 or later
+latexdiff requires Emacs-24.4 or later
 and optionnaly [Helm](https://github.com/emacs-helm/helm).
 
 ## Install
@@ -12,9 +12,9 @@ and optionnaly [Helm](https://github.com/emacs-helm/helm).
 #### Installing latexdiff
 Install `latexdiff` from your package manager or from
 [the official website](https://github.com/ftilmann/latexdiff).
-Emacs-latexdiff uses `latexdiff-vc' so make sure it is available.
+latexdiff uses `latexdiff-vc' so make sure it is available.
 
-#### Installing Emacs-latexdiff from git
+#### Installing latexdiff from git
   1. Clone the `latexdiff` repository to some directory:
 
 ```bash
@@ -25,23 +25,23 @@ Emacs-latexdiff uses `latexdiff-vc' so make sure it is available.
 
 ```elisp
     (add-to-list 'load-path "/path/to/latexdiff/directory")
-    (require 'emacs-latexdiff)
+    (require 'latexdiff)
 ```
 
-#### Installing Emacs-latexdiff from MELPA
+#### Installing latexdiff from MELPA
 
 ```elisp
-(package-install 'emacs-latexdiff)
+(package-install 'latexdiff)
 ```
 
 ## Configuration
-Emacs-latexdiff faces and behaviour can be customized through the customization panel :
+latexdiff faces and behaviour can be customized through the customization panel :
 
 ```elisp
 (customize-group 'latexdiff)
 ```
 
-Emacs-latexdiff does not define default keybindings, so you may want to add
+latexdiff does not define default keybindings, so you may want to add
 some :
 
 ```elisp
