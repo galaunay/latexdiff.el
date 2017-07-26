@@ -400,15 +400,6 @@ Return the diff file name"
         (file2 (read-file-name "Base file: " nil nil t nil)))
     (latexdiff--compile-diff file1 file2)))
 
-(defun helm-latexdiff-vc ()
-  "Ask for a commit and make the difference with the current version."
-  (interactive)
-  (latexdiff--check-if-installed)
-  (helm :sources 'helm-source-latexdiff-choose-commit
-        :buffer "*latexdiff*"
-        :nomark t
-        :prompt "Choose a commit: "))
-
 (defun latexdiff-vc ()
   "Ask for a commit and make the difference with the current version."
   (interactive)
@@ -422,6 +413,16 @@ Return the diff file name"
 ;; Helm
 ;;;;;;;;;
 (when (featurep 'helm)
+  (require helm-source)
+
+  (defun helm-latexdiff-vc ()
+    "Ask for a commit and make the difference with the current version."
+    (interactive)
+    (latexdiff--check-if-installed)
+    (helm :sources 'helm-source-latexdiff-choose-commit
+          :buffer "*latexdiff*"
+          :nomark t
+          :prompt "Choose a commit: "))
 
   (defvar helm-source-latexdiff-choose-commit
     (helm-build-sync-source "Latexdiff choose commit"
