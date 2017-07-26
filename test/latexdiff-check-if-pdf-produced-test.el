@@ -2,5 +2,4 @@
   (let ((pdf1 (latexdiff-testcase-pdf1))
         (dummypdf (latexdiff-testcase-dummy-pdf)))
     (should (latexdiff--check-if-pdf-produced pdf1))
-    (should (not (latexdiff--check-if-pdf-produced dummypdf)))
-    (latexdiff-clean)))
+    (should (not (latexdiff--check-if-pdf-produced dummypdf)))))
