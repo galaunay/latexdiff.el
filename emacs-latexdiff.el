@@ -92,7 +92,6 @@
 (require 'subr-x)
 (require 'tex)
 
-
 ;; Faces and variables
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -412,8 +411,8 @@ Return the diff file name"
 
 ;; Helm
 ;;;;;;;;;
+
 (when (featurep 'helm)
-  (require helm-source)
 
   (defun helm-latexdiff-vc ()
     "Ask for a commit and make the difference with the current version."
