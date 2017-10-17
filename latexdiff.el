@@ -56,6 +56,7 @@
 
 ;;; Code:
 
+(require 'helm)
 (require 'vc-git)
 (require 'subr-x)
 (require 'f)
