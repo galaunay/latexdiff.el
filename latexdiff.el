@@ -4,9 +4,9 @@
 
 ;; Author: Launay Gaby <gaby.launay@tutanota.com>
 ;; Maintainer: Launay Gaby <gaby.launay@tutanota.com>
-;; Package-Requires: ((emacs "24.4") (f "0.19.0"))
+;; Package-Requires: ((emacs "24.4"))
 ;; Version: 0.1.0
-;; Keywords: tex, vc, tools
+;; Keywords: tex, vc, tools, git, helm
 ;; URL: http://github.com/galaunay/latexdiff.el
 
 ;; This file is NOT part of GNU Emacs.
