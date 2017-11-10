@@ -2,6 +2,8 @@
 
 Latexdiff.el is a backend in Emacs for [Latexdiff](https://github.com/ftilmann/latexdiff).
 
+![Demonstration](https://raw.githubusercontent.com/galaunay/latexdiff.el/master/doc/latexdiff.gif)
+
 ## Requirements
 
 latexdiff.el requires Emacs-24.4 or later
