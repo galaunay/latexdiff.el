@@ -5,10 +5,10 @@
 (package "latexdiff" "0.1" "Latexdiff integration in Emacs")
 
 (depends-on "auctex" "11.90.2")
+(depends-on "vc-git" "11.90.2")
 
 
 (development
- (depends-on "f")
  (depends-on "ecukes")
  (depends-on "ert-runner")
  (depends-on "el-mock"))
