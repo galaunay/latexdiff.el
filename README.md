@@ -73,7 +73,7 @@ To run the tests you will need to install cask, then:
 
 ```bash
 $ cask install
-$ make test
+$ cask make test
 ```
 
 ## Todo
