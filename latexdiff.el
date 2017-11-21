@@ -71,6 +71,9 @@
 ;; Faces and variables
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defvar-local latexdiff-runningp nil
+  "t when a latexdiff process is running for the current buffer")
+
 (defcustom latexdiff-args
   '()
   "Arguments passed to 'latexdiff'.
@@ -181,7 +184,8 @@ display when the process ends"
     ;; Display the TeX file if asked
     (when latexdiff-auto-display
       (message "[%s] Displaying TeX diff with %s" filename1 filename2)
-      (find-file (format "%s.tex" diff-file)))))
+      (find-file (format "%s.tex" diff-file))))
+  (setq latexdiff-runningp nil))
 
 
 (defun latexdiff--compile-diff (file1 file2 &optional dir)
@@ -195,7 +199,7 @@ Just generate a tex file, you still have to compile it to get a pdf diff."
          (file2 (expand-file-name file2))
          (filename1 (file-name-nondirectory (file-name-sans-extension file1)))
          (filename2 (file-name-nondirectory (file-name-sans-extension file2)))
-         (diff-dir (or (expand-file-name dir) (file-name-directory file1)))
+         (diff-dir (if dir (expand-file-name dir) (file-name-directory file1)))
          (diff-file (format "%s%s-%s-diff"
                             (file-name-as-directory diff-dir)
                             filename1
@@ -203,6 +207,7 @@ Just generate a tex file, you still have to compile it to get a pdf diff."
          (default-directory diff-dir)
          (process nil))
     (latexdiff--check-if-installed)
+    (setq latexdiff-runningp t)
     (message "[%s] Generating latex diff with %s" filename1 filename2)
     (setq process (start-process "latexdiff"
                                  " *latexdiff*"
@@ -248,16 +253,17 @@ display when the process ends."
       ;; Display the tex if asked
       (when latexdiff-auto-display
         (message "[%s] Displaying PDF diff between %s and %s" file REV1 REV2)
-        (latexdiff--display-pdf (format "%s/%s.pdf" diff-dir file))))))
+        (latexdiff--display-pdf (format "%s/%s.pdf" diff-dir file)))))
+  (setq latexdiff-runningp nil))
 
 
-;; TODO : Try to use the '--dir' option to do that in a temporary repo
 (defun latexdiff-vc--compile-diff (REV1 REV2)
   "Use latexdiff to compile a pdf file of the difference between REV1 and REV2."
   (let* ((file (file-name-base))
          (diff-dir (format "%s/diff%s-%s" default-directory REV1 REV2))
          (process nil))
     (latexdiff--check-if-installed)
+    (setq latexdiff-runningp t)
     (message "[%s] Generating latex diff between %s and %s" file REV1 REV2)
     (setq process (start-process "latexdiff" " *latexdiff*"
                                  "/bin/sh" "-c"
@@ -282,6 +288,7 @@ display when the process ends."
          (diff-dir (format "%sdiff%s" default-directory REV))
          (process nil))
     (latexdiff--check-if-installed)
+    (setq latexdiff-runningp t)
     (message "[%s] Generating latex diff with %s" file REV)
     (setq process (start-process "latexdiff" " *latexdiff*"
                                  "/bin/sh" "-c"
@@ -391,7 +398,9 @@ else, delete all files generated in the current directory."
          (dir-to-del (seq-filter 'file-directory-p (directory-files dir t "diff[a-z0-9]\\{7\\}\\(-[a-z0-9]\\{7\\}\\)?"))))
     (seq-do (lambda (dir) (delete-directory dir t))
             dir-to-del)
-    (delete-file "latexdiff.log")
+    (condition-case nil
+        (delete-file "latexdiff.log")
+      (error))
     (message "[%s] Removed latexdiff generated files" (file-name-nondirectory (directory-file-name dir)))))
 
 
@@ -430,41 +439,41 @@ else, delete all files generated in the current directory."
 ;;;;;;;;;
 
 
-(defun require-helm-if-present ()
-  "Require helm if present."
-  (condition-case nil
-      (require 'helm)
-    (error (error "Helm is not installed"))))
+;; (defun require-helm-if-present ()
+;;   "Require helm if present."
+;;   (condition-case nil
+;;       (require 'helm)
+;;     (error (error "Helm is not installed"))))
 
 
-(defvar helm-source-latexdiff-choose-commit
-  (helm-build-sync-source "Latexdiff choose a commit:"
-    :candidates 'latexdiff--get-commit-hash-alist
-    :action '(("Choose this commit" .
-               latexdiff-vc--compile-diff-with-current)))
-  "Helm source for modified projectile projects.")
+;; (defvar helm-source-latexdiff-choose-commit
+;;   (helm-build-sync-source "Latexdiff choose a commit:"
+;;     :candidates 'latexdiff--get-commit-hash-alist
+;;     :action '(("Choose this commit" .
+;;                latexdiff-vc--compile-diff-with-current)))
+;;   "Helm source for modified projectile projects.")
 
 
-;;;###autoload
-(defun helm-latexdiff-vc ()
-  "Ask for a commit and make the difference with the current version."
-  (interactive)
-  (require-helm-if-present)
-  (helm :sources 'helm-source-latexdiff-choose-commit
-        :buffer "*latexdiff*"
-        :nomark t
-        :prompt "Choose a commit: "))
+;; ;;;###autoload
+;; (defun helm-latexdiff-vc ()
+;;   "Ask for a commit and make the difference with the current version."
+;;   (interactive)
+;;   (require-helm-if-present)
+;;   (helm :sources 'helm-source-latexdiff-choose-commit
+;;         :buffer "*latexdiff*"
+;;         :nomark t
+;;         :prompt "Choose a commit: "))
 
 
-;;;###autoload
-(defun helm-latexdiff-vc-range ()
-  "Ask for two commits and make the difference between them."
-  (interactive)
-  (require-helm-if-present)
-  (let* ((commits (latexdiff--get-commit-hash-alist))
-         (rev1 (helm-comp-read "Base commit: " commits))
-         (rev2 (helm-comp-read "Revised commit: " commits)))
-    (latexdiff-vc--compile-diff rev1 rev2)))
+;; ;;;###autoload
+;; (defun helm-latexdiff-vc-range ()
+;;   "Ask for two commits and make the difference between them."
+;;   (interactive)
+;;   (require-helm-if-present)
+;;   (let* ((commits (latexdiff--get-commit-hash-alist))
+;;          (rev1 (helm-comp-read "Base commit: " commits))
+;;          (rev2 (helm-comp-read "Revised commit: " commits)))
+;;     (latexdiff-vc--compile-diff rev1 rev2)))
 
 (provide 'latexdiff)
 ;;; latexdiff.el ends here
