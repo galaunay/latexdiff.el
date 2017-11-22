@@ -57,11 +57,6 @@
 ;;   (pdf included).
 
 
-;;; Todo
-
-;; run tests
-;; take care of helm requirement
-
 ;;; Code:
 
 (require 'vc-git)
@@ -199,13 +194,15 @@ Just generate a tex file, you still have to compile it to get a pdf diff."
          (file2 (expand-file-name file2))
          (filename1 (file-name-nondirectory (file-name-sans-extension file1)))
          (filename2 (file-name-nondirectory (file-name-sans-extension file2)))
-         (diff-dir (if dir (expand-file-name dir) (file-name-directory file1)))
+         (diff-dir (if dir (expand-file-name dir)
+                     (format "%sdiff-%s" (file-name-directory file1) filename2)))
          (diff-file (format "%s%s-%s-diff"
                             (file-name-as-directory diff-dir)
                             filename1
                             filename2))
          (default-directory diff-dir)
          (process nil))
+    (mkdir diff-dir t)
     (latexdiff--check-if-installed)
     (setq latexdiff-runningp t)
     (message "[%s] Generating latex diff with %s" filename1 filename2)
@@ -235,6 +232,11 @@ display when the process ends."
         (REV1 (process-get proc 'rev1))
         (REV2 (process-get proc 'rev2)))
     (kill-buffer " *latexdiff*")
+    ;; Remove additional files created by latexdiff-vc
+    (let ((file-to-del
+           (directory-files default-directory t
+                            (format "%s-\\(old\\|new\\)tmp-[0-9]+.tex" file))))
+      (seq-do 'delete-file file-to-del))
     ;; Check if tex file has been produced
     (if (not (latexdiff--check-if-file-produced (format "%s/%s.pdf" diff-dir file)))
         (progn
@@ -245,11 +247,6 @@ display when the process ends."
           (kill-buffer "latexdiff.log")
           (message "[%s] PDF file has not been produced, check `%s' buffer for more informations"
                    file "*latexdiff-log*"))
-      ;; Remove additional files created by latexdiff-vc
-      (let ((file-to-del
-             (directory-files default-directory t
-                              (format "%s-\\(old\\|new\\)tmp-[0-9]+.tex" file))))
-        (seq-do 'delete-file file-to-del))
       ;; Display the tex if asked
       (when latexdiff-auto-display
         (message "[%s] Displaying PDF diff between %s and %s" file REV1 REV2)
@@ -260,14 +257,14 @@ display when the process ends."
 (defun latexdiff-vc--compile-diff (REV1 REV2)
   "Use latexdiff to compile a pdf file of the difference between REV1 and REV2."
   (let* ((file (file-name-base))
-         (diff-dir (format "%s/diff%s-%s" default-directory REV1 REV2))
+         (diff-dir (format "%sdiff%s-%s" default-directory REV1 REV2))
          (process nil))
     (latexdiff--check-if-installed)
     (setq latexdiff-runningp t)
     (message "[%s] Generating latex diff between %s and %s" file REV1 REV2)
     (setq process (start-process "latexdiff" " *latexdiff*"
                                  "/bin/sh" "-c"
-                                 (format " yes X | latexdiff-vc --pdf --force --dir %s -r %s -r %s %s.tex &> latexdiff.log ;"
+                                 (format "yes X | latexdiff-vc --pdf --force --dir --git %s -r %s -r %s %s.tex &> latexdiff.log ;"
                                          (mapconcat 'shell-quote-argument
                                                     latexdiff-vc-args
                                                     " ")
@@ -292,7 +289,7 @@ display when the process ends."
     (message "[%s] Generating latex diff with %s" file REV)
     (setq process (start-process "latexdiff" " *latexdiff*"
                                  "/bin/sh" "-c"
-                                 (format "yes X | latexdiff-vc --dir --pdf --force %s -r %s %s.tex &> latexdiff.log;"
+                                 (format "yes X | latexdiff-vc --dir --pdf --force --git %s -r %s %s.tex &> latexdiff.log;"
                                          (mapconcat 'shell-quote-argument
                                                     latexdiff-vc-args
                                                     " ")
