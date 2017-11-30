@@ -10,4 +10,5 @@
 (development
  (depends-on "ecukes")
  (depends-on "ert-runner")
+ (depends-on "helm")
  (depends-on "el-mock"))

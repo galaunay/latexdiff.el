@@ -1,4 +1,5 @@
 (ert-deftest check-rev-to-current-diff ()
+  (message "Check revision to current diff")
   (let ((file1 (latexdiff-testcase-file1))
         (rev1 (latexdiff-testcase-rev1))
         (latexdiff-auto-display nil))

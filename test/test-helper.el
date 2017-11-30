@@ -2,7 +2,6 @@
 ;;; Code:
 
 
-
 (let ((latexdiff-dir (f-parent (f-dirname (f-this-file)))))
   (add-to-list 'load-path latexdiff-dir))
 

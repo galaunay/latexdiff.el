@@ -1,4 +1,5 @@
 (ert-deftest check-rev-to-rev-diff ()
+  (message "Check revision to revision diff")
   ;; working example
   (let ((file1 (latexdiff-testcase-file1))
         (rev1 (latexdiff-testcase-rev1))

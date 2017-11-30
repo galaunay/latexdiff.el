@@ -1,4 +1,5 @@
 (ert-deftest check-file-to-file-diff ()
+  (message "Check file to file diff")
   (let* ((file1 (latexdiff-testcase-file1))
          (file2 (latexdiff-testcase-file2))
          (filename1 (file-name-base file1))

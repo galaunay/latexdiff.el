@@ -3,12 +3,9 @@ EMACS ?= emacs
 
 all: test
 
-test: unit
-
-unit:
+test:
+	${CASK} install
 	${CASK} exec ert-runner
 
-install:
-	${CASK} install
 
-.PHONY:	all test unit ecukes install
+.PHONY:	all test ecukes

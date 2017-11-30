@@ -81,8 +81,7 @@ You can report issues or make pull requests here.
 To run the tests you will need to install cask, then:
 
 ```bash
-$ cask install
-$ cask exec make test
+$ make test
 ```
 
 ## Todo

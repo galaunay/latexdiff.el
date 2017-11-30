@@ -1,0 +1,7 @@
+(ert-deftest check-helm-available ()
+  (message "Check helm available")
+  (should (not (functionp 'helm-latexdiff-vc)))
+  (should (not (functionp 'helm-latexdiff-vc-range)))
+  (require 'helm-mode)
+  (should (functionp 'helm-latexdiff-vc))
+  (should (functionp 'helm-latexdiff-vc-range)))

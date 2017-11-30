@@ -1,4 +1,5 @@
 (ert-deftest check-commits-description ()
+  (message "Check commits description")
   (let ((file (latexdiff-testcase-file1)))
     (find-file file)
     (let ((desc (latexdiff--get-commits-description))

@@ -1,4 +1,5 @@
-(ert-deftest check-if-pdf-produced ()
+(ert-deftest check-if-file-produced ()
+  (message "Check if file produced")
   (let ((pdf1 (latexdiff-testcase-pdf1))
         (dummypdf (latexdiff-testcase-dummy-pdf)))
     (should (latexdiff--check-if-file-produced pdf1))
