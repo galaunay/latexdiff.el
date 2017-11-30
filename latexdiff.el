@@ -58,7 +58,6 @@
 
 ;;; Code:
 
-(require 'vc-git)
 (require 'seq)
 
 
