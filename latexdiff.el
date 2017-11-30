@@ -417,42 +417,33 @@ Used to show nice commit description during commit selection."
 ;; Helm
 ;;;;;;;;;
 
+(with-eval-after-load 'helm-mode
 
-;; (defun require-helm-if-present ()
-;;   "Require helm if present."
-;;   (condition-case nil
-;;       (require 'helm)
-;;     (error (error "Helm is not installed"))))
-
-
-;; (defvar helm-source-latexdiff-choose-commit
-;;   (helm-build-sync-source "Latexdiff choose a commit:"
-;;     :candidates 'latexdiff--get-commit-hash-alist
-;;     :action '(("Choose this commit" .
-;;                latexdiff-vc--compile-diff-with-current)))
-;;   "Helm source for modified projectile projects.")
+  (defvar helm-source-latexdiff-choose-commit
+    (helm-build-sync-source "Latexdiff choose a commit:"
+      :candidates 'latexdiff--get-commit-hash-alist
+      :action '(("Choose this commit" .
+                 latexdiff-vc--compile-diff-with-current)))
+    "Helm source for modified projectile projects.")
 
 
-;; ;;;###autoload
-;; (defun helm-latexdiff-vc ()
-;;   "Ask for a commit and make the difference with the current version."
-;;   (interactive)
-;;   (require-helm-if-present)
-;;   (helm :sources 'helm-source-latexdiff-choose-commit
-;;         :buffer "*latexdiff*"
-;;         :nomark t
-;;         :prompt "Choose a commit: "))
+  (defun helm-latexdiff-vc ()
+    "Ask for a commit and make the difference with the current version."
+    (interactive)
+    (helm :sources 'helm-source-latexdiff-choose-commit
+          :buffer "*latexdiff*"
+          :nomark t
+          :prompt "Choose a commit: "))
 
 
-;; ;;;###autoload
-;; (defun helm-latexdiff-vc-range ()
-;;   "Ask for two commits and make the difference between them."
-;;   (interactive)
-;;   (require-helm-if-present)
-;;   (let* ((commits (latexdiff--get-commit-hash-alist))
-;;          (rev1 (helm-comp-read "Base commit: " commits))
-;;          (rev2 (helm-comp-read "Revised commit: " commits)))
-;;     (latexdiff-vc--compile-diff rev1 rev2)))
+  (defun helm-latexdiff-vc-range ()
+    "Ask for two commits and make the difference between them."
+    (interactive)
+    (let* ((commits (latexdiff--get-commit-hash-alist))
+           (rev1 (helm-comp-read "Base commit: " commits))
+           (rev2 (helm-comp-read "Revised commit: " commits)))
+      (latexdiff-vc--compile-diff rev1 rev2)))
+  )
 
 (provide 'latexdiff)
 ;;; latexdiff.el ends here
