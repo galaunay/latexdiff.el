@@ -32,12 +32,6 @@ latexdiff.el uses `latexdiff-vc' so make sure it is available.
     (require 'latexdiff)
 ```
 
-#### Installing latexdiff.el from MELPA
-
-```elisp
-(package-install 'latexdiff)
-```
-
 ## Configuration
 
 latexdiff.el faces and behaviour can be customized through the customization panel :
