@@ -46,9 +46,10 @@
 
 ;; Basic usage
 
-;; - `latexdiff` will ask for two tex files and generates a pdf diff between
-;;   them,
-;;   this is the only function that work outside of a repository.
+;; File to file diff:
+;; - `latexdiff` will ask for two tex files and generates a tex diff between
+;;   them (that you will need to compile).
+;; Version diff (git repo only):
 ;; - `latexdiff-vc` (and `helm-latexdiff-vc`) will ask for a previous commit
 ;;   number and make a pdf diff between this version and the current one.
 ;; - `latexdiff-vc-range` (and `helm-latexdiff-vc-range`) will ask for two
