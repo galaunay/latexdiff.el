@@ -99,7 +99,7 @@ multiple files."
 (defcustom latexdiff-pdf-viewer "Emacs"
   "Command use to view PDF diffs.
 
-If set to 'Emacs', open the PDF within Emacs."
+If set to 'Emacs' (default), open the PDF within Emacs."
   :type 'string
   :group 'latexdiff)
 
@@ -174,8 +174,8 @@ display when the process ends"
   (let* ((diff-file (process-get proc 'diff-file))
          (file1 (process-get proc 'file1))
          (file2 (process-get proc 'file2))
-         (filename1 (file-name-nondirectory (file-name-sans-extension file1)))
-         (filename2 (file-name-nondirectory (file-name-sans-extension file2))))
+         (filename1 (file-name-base file1))
+         (filename2 (file-name-base file2)))
     (kill-buffer " *latexdiff*")
     ;; Display the TeX file if asked
     (when latexdiff-auto-display
@@ -193,8 +193,8 @@ of FILE1 if nil.
 Just generate a tex file, you still have to compile it to get a pdf diff."
   (let* ((file1 (expand-file-name file1))
          (file2 (expand-file-name file2))
-         (filename1 (file-name-nondirectory (file-name-sans-extension file1)))
-         (filename2 (file-name-nondirectory (file-name-sans-extension file2)))
+         (filename1 (file-name-base file1))
+         (filename2 (file-name-base file2))
          (diff-dir (if dir (expand-file-name dir)
                      (format "%sdiff-%s" (file-name-directory file1) filename2)))
          (diff-file (format "%s%s-%s-diff"
@@ -248,7 +248,7 @@ display when the process ends."
           (kill-buffer "latexdiff.log")
           (message "[%s] PDF file has not been produced, check `%s' buffer for more informations"
                    file "*latexdiff-log*"))
-      ;; Display the tex if asked
+      ;; Display the tex file if asked
       (when latexdiff-auto-display
         (message "[%s] Displaying PDF diff between %s and %s" file REV1 REV2)
         (latexdiff--display-pdf (format "%s/%s.pdf" diff-dir file)))))
@@ -372,7 +372,7 @@ Used to show nice commit description during commit selection."
 
 
 (defun latexdiff--get-commit-hash-alist ()
-  "Return a list of alist (HASH . COMMITS-DESCRIPTION) foe each commit."
+  "Return a list of alist (HASH . COMMITS-DESCRIPTION) for each commit."
   (let ((descr (latexdiff--get-commits-description))
         (hash (latexdiff--get-commits-hashes))
         (list ()))
@@ -406,14 +406,16 @@ else, delete all files generated in the current directory."
 (defun latexdiff ()
   "Ask for two tex files and make the difference between them."
   (interactive)
-  (let ((file1 (expand-file-name (read-file-name "Base file: " nil nil t nil)))
-        (file2 (expand-file-name (read-file-name "Base file: " nil nil t nil))))
+  (let ((file1 (expand-file-name (read-file-name "Base file: "
+                                                 nil nil t nil)))
+        (file2 (expand-file-name (read-file-name "Revised file: "
+                                                 nil nil t nil))))
     (latexdiff--compile-diff file1 file2)))
 
 
 ;;;###autoload
 (defun latexdiff-vc ()
-  "Compile the pdf difference between the choosen commit and the current version."
+  "Compile the pdf difference between the choosen commit and the current version of the current file."
   (interactive)
   (let* ((commits (latexdiff--get-commit-hash-alist))
          (commit (completing-read "Choose a commit:" commits))

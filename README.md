@@ -84,7 +84,7 @@ To run the tests you will need to install cask, then:
 
 ```bash
 $ cask install
-$ cask make test
+$ cask exec make test
 ```
 
 ## Todo
