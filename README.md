@@ -1,5 +1,7 @@
 # Latexdiff.el
 
+[![MELPA](http://melpa.milkbox.net/packages/latexdiff-badge.svg)](http://melpa.milkbox.net/#/latexdiff)
+
 Latexdiff.el is a backend in Emacs for [Latexdiff](https://github.com/ftilmann/latexdiff).
 
 ![Demonstration](https://raw.githubusercontent.com/galaunay/latexdiff.el/master/doc/latexdiff.gif)
@@ -16,6 +18,15 @@ and optionnaly [Helm](https://github.com/emacs-helm/helm).
 Install `latexdiff` from your package manager or from
 [the official website](https://github.com/ftilmann/latexdiff).
 latexdiff.el uses `latexdiff-vc' so make sure it is available.
+
+#### Installing latexdiff.el from MELPA
+
+If you already use MELPA, all you have to do is:
+
+    M-x package-install RET latexdiff RET
+
+For help installing and using MELPA, see [these instructions](
+http://melpa.milkbox.net/#/getting-started).
 
 #### Installing latexdiff.el from git
 
