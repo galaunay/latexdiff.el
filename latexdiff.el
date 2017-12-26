@@ -418,6 +418,7 @@ Used to show nice commit description during commit selection."
 ;;;;;;;;;
 
 (with-eval-after-load "helm-mode"
+  (require 'helm-source)
 
   (defvar helm-source-latexdiff-choose-commit
     (helm-build-sync-source "Latexdiff choose a commit:"
