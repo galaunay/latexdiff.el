@@ -306,7 +306,7 @@ display when the process ends."
   (let ((infos nil))
     (with-temp-buffer
       (vc-git-command t nil nil
-                      "log" "--format=%h---%cr---%cn---%s---%d"
+                      "log" "--all" "--format=%h---%cr---%cn---%s---%d"
                       "--abbrev-commit" "--date=short")
       (goto-char (point-min))
       (while (re-search-forward "^.+$" nil t)
