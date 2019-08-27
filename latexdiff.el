@@ -207,7 +207,7 @@ Just generate a tex file, you still have to compile it to get a pdf diff."
     (setq process (start-process "latexdiff"
                                  " *latexdiff*"
                                  "/bin/sh" "-c"
-                                 (format "yes X | latexdiff %s %s %s &> %s.tex ;"
+                                 (format "yes X | latexdiff %s %s %s > %s.tex 2>&1 ;"
                                          (mapconcat 'shell-quote-argument
                                                     latexdiff-args " ")
                                          (shell-quote-argument file1)
@@ -243,7 +243,7 @@ display when the process ends."
             (erase-buffer)
             (insert-buffer-substring "latexdiff.log"))
           (kill-buffer "latexdiff.log")
-          (message "[%s] PDF file has not been produced, check `%s' buffer for more informations"
+          (message "[%s] PDF file has not been produced, check `%s' buffer for more information"
                    file "*latexdiff-log*"))
       ;; Display the tex file if asked
       (when latexdiff-auto-display
@@ -262,7 +262,7 @@ display when the process ends."
     (message "[%s] Generating latex diff between %s and %s" file REV1 REV2)
     (setq process (start-process "latexdiff" " *latexdiff*"
                                  "/bin/sh" "-c"
-                                 (format "yes X | latexdiff-vc --pdf --force --dir --git %s -r %s -r %s %s.tex &> latexdiff.log ;"
+                                 (format "yes X | latexdiff-vc --pdf --force --dir --git %s -r %s -r %s %s.tex > latexdiff.log 2>&1 ;"
                                          (mapconcat 'shell-quote-argument
                                                     latexdiff-vc-args
                                                     " ")
@@ -287,7 +287,7 @@ display when the process ends."
     (message "[%s] Generating latex diff with %s" file REV)
     (setq process (start-process "latexdiff" " *latexdiff*"
                                  "/bin/sh" "-c"
-                                 (format "yes X | latexdiff-vc --dir --pdf --force --git %s -r %s %s.tex &> latexdiff.log;"
+				 (format "yes X | latexdiff-vc --dir --pdf --force --git %s -r %s %s.tex > latexdiff.log 2>&1 ;"
                                          (mapconcat 'shell-quote-argument
                                                     latexdiff-vc-args
                                                     " ")
