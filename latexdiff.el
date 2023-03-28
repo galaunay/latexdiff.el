@@ -421,7 +421,7 @@ Used to show nice commit description during commit selection."
   (require 'helm-source)
 
   (defvar helm-source-latexdiff-choose-commit
-    (helm-build-sync-source "Latexdiff choose a commit:"
+    (helm-make-source "Latexdiff choose a commit:" 'helm-source-sync
       :candidates 'latexdiff--get-commit-hash-alist
       :action '(("Choose this commit" .
                  latexdiff-vc--compile-diff-with-current)))
